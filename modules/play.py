@@ -496,16 +496,13 @@ async def deezer(client: Client, message_: Message):
     res = lel
     await res.edit(f"GETTIᑎG `{queryy}` ")
     try:
-        songs = await arq.deezer(query,1)
-        if not songs.ok:
-            await message_.reply_text(songs.result)
-            return
-        title = songs.result[0].title
-        url = songs.result[0].url
-        artist = songs.result[0].artist
-        duration = songs.result[0].duration
-        thumbnail = "https://telegra.ph/file/f6086f8909fbfeb0844f2.png"
-
+        arq = ARQ("https://thearq.tech")
+        r = await arq.deezer(query=queryy, limit=1)
+        title = r[0]["title"]
+        duration = int(r[0]["duration"])
+        thumbnail = r[0]["thumbnail"]
+        artist = r[0]["artist"]
+        url = r[0]["url"]
     except:
         await res.edit("𝐅𝐨𝐮𝐧𝐝 𝐋𝐢𝐭𝐞𝐫𝐚𝐥𝐥𝐲 𝐍𝐨𝐭𝐡𝐢𝐧𝐠, 𝐘𝐨𝐮 𝐒𝐡𝐨𝐮𝐥𝐝 𝐖𝐨𝐫𝐤 𝐎𝐧 𝐘𝐨𝐮𝐫 𝐄𝐧𝐠𝐥𝐢𝐬𝐡!")
         return
@@ -636,15 +633,16 @@ async def jiosaavn(client: Client, message_: Message):
     res = lel
     await res.edit(f"GETTIᑎG `{query}` ")
     try:
-        songs = await arq.saavn(query)
-        if not songs.ok:
-            await message_.reply_text(songs.result)
-            return
-        sname = songs.result[0].song
-        slink = songs.result[0].media_url
-        ssingers = songs.result[0].singers
-        sthumb = songs.result[0].image
-        sduration = int(songs.result[0].duration)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"https://jiosaavnapi.bhadoo.uk/result/?query={query}"
+            ) as resp:
+                r = json.loads(await resp.text())
+        sname = r[0]["song"]
+        slink = r[0]["media_url"]
+        ssingers = r[0]["singers"]
+        sthumb = r[0]["image"]
+        sduration = int(r[0]["duration"])
     except Exception as e:
         await res.edit("𝐅𝐨𝐮𝐧𝐝 𝐋𝐢𝐭𝐞𝐫𝐚𝐥𝐥𝐲 𝐍𝐨𝐭𝐡𝐢𝐧𝐠!, 𝐘𝐨𝐮 𝐒𝐡𝐨𝐮𝐥𝐝 𝐖𝐨𝐫𝐤 𝐎𝐧 𝐘𝐨𝐮𝐫 𝐄𝐧𝐠𝐥𝐢𝐬𝐡.")
         print(str(e))
